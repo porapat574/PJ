@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../head') %>
+        <title>แจ้งชำระเงิน</title>
+</head>
+
+<body class="bodyimg">
+    <%- include('../nav')%>
+        <div class="container-fluid" style="min-width: 100%">
+            <div class="rounded m-3 w-con mx-auto bg-secondary" style="height: 970px">
+                <div class="d-flex pt-3 bd-highlight">
+                    <div class="p-2 bg-dark flex-fill text-white">
+                        <h2>
+                            <img src="/img/pay.png" alt="com" width="75px" />
+                            แจ้งชำระเงิน
+                        </h2>
+                    </div>
+                </div>
+                <div class="rounded m-3 bg-dark w-con mx-auto">
+                    <div class="float-start w-70 border bg-white border-info p-3 rounded">
+                        <form method="POST" action="/payments" enctype="multipart/form-data">
+                            <p>
+                                รหัสสั่งซื้อ: # <input type="text" name="or_id" class="fw-bold" style="border: none;"
+                                    value="<%- myOr[0].or_id %>" readonly>
+                            </p>
+                            <p>วันที่: <span class="fw-bold"><%- formatDate(myOr[0].or_date) %></span></p>
+                            <table class="table table-hover text-center">
+                                <th><i class="fa-solid fa-hashtag"></i></th>
+                                <th><i class="fa-solid fa-image"></i> รูป</th>
+                                <th><i class="fa-solid fa-box"></i> ชื่อสินค้า</th>
+                                <th><i class="fa-solid fa-tags"></i> ราคา/กก.</th>
+                                <th><i class="fa-solid fa-cubes"></i> จำนวน/กก.</th>
+                                <th><i class="fa-solid fa-money-check-dollar"></i>
+                                    รวม</th>
+                                <tbody id="order_list">
+                                    <% for (var i in myOr) { %>
+                                        <tr>
+                                            <td class="text-center"><%- myOr[i].f_id %></td>
+                                            <td class="text-center">
+                                                <img src="/uploads/<%- myOr[i].f_img %>" alt="#" width="100px" />
+                                            </td>
+                                            <td class="text-center"><%- myOr[i].f_name %></td>
+                                            <td class="text-center">
+                                                <%- myOr[i].sale_price.toLocaleString() %>
+                                            </td>
+                                            <td class="text-center">
+                                                <%- myOr[i].qty.toLocaleString() %>
+                                            </td>
+                                            <td class="text-center">
+                                                <%- myOr[i].total.toLocaleString() %>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                </tbody>
+                            </table>
+                            <p class="text-end">
+                                ยอดรวมสุทธิ:
+                                <span class="fw-bold"><%- myOr[0].or_total.toLocaleString() %></span>
+                            </p>
+                    </div>
+                    <div class="float-end w-25 border bg-white border-info p-3 rounded">
+                        <p><i class="fa-solid fa-user"></i> ข้อมูลลูกค้า</p>
+                        <p>
+                            <i class="fa-solid fa-address-card"></i> ชื่อ:
+                            <span class="fw-bold"><%- user.name %></span>
+                        </p>
+                        <p>
+                            <i class="fa-solid fa-mobile"></i>:
+                            <span class="fw-bold"><%- user.cus_tel %></span>
+                        </p>
+                        <p>
+                            <i class="fa-solid fa-location-dot"></i> ที่อยู่:
+                            <br /><span class="fw-bold"><%- user.cus_address %></span>
+                        </p>
+                    </div>
+
+                    <div class="float-start w-70 bg-white border border-info p-3 mt-3 rounded">
+                        <div class="float-start w-50">
+                            <p># : <input type="text" name="pay_id" class="fw-bold" style="border: none;"
+                                value="<%- payId %>" readonly></p>
+
+                            <div class="input-group  mb-2">
+                                <span class="input-group-text"><i class="fa-regular fa-calendar-days"></i>
+                                    &nbsp;วันที่โอน</span>
+                                <input type="datetime-local" name="date_pay" class="form-control" required>
+                            </div>
+                            <p style="font-size: 18px">
+                                <i class="fa-solid fa-receipt"></i>
+                                หลักฐานการโอนเงิน :
+                            </p>
+                            <div class="input-group mb-2">
+                                <input type="file" class="form-control" name="f_img" onchange="previewImage(this)""
+                                    required>
+                            </div>
+                            <button type="button" onclick="confirmPayment()"
+                                    class="btn btn-primary">แจ้งชำระเงิน</button>
+                            </div>
+                            <div class="float-end w-50 ps-3">
+                                <img id="imagePreview" src="" alt="Preview" class="border border-info rounded"
+                                    style="max-width: 250px; margin-left: 10px; display: none" />
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% function formatDate(dateStr) { const date=new Date(dateStr); const
+                day=date.getDate().toString().padStart(2, '0' ); const month=(date.getMonth() +
+                1).toString().padStart(2, '0' ); const year=date.getFullYear(); return `${day}/${month}/${year}`; } %>
+                <script>
+
+                    function previewImage(input) {
+                        var preview = document.getElementById("imagePreview");
+                        var file = input.files[0];
+                        var reader = new FileReader();
+
+                        reader.onloadend = function () {
+                            preview.src = reader.result;
+                            preview.style.display = "block";
+                        };
+
+                        if (file) {
+                            reader.readAsDataURL(file);
+                        } else {
+                            preview.src = "";
+                            preview.style.display = "none";
+                        }
+                    }
+                    function confirmPayment() {
+                        // Get the input element for file
+                        var fileInput = document.querySelector('input[type="file"]');
+
+                        // Check if a file is selected
+                        if (fileInput.files.length === 0) {
+                            // No file selected, show SweetAlert2 message
+                            Swal.fire({
+                                icon: "error",
+                                title: "กรุณาแนบหลักฐานการโอนเงิน",
+                                text: "คุณต้องแนบรูปภาพที่เป็นหลักฐานการโอนเงิน",
+                            });
+                        } else {
+                            // File selected, confirm payment using SweetAlert2
+                            Swal.fire({
+                                title: "แจ้งการชำระเงิน?",
+                                text: "ยืนยันการชำระเงินหรือไม่?",
+                                icon: "question",
+                                showCancelButton: true,
+                                confirmButtonText: "ยืนยัน",
+                                cancelButtonText: "ยกเลิก",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    document.querySelector("form").submit();
+                                }
+                            });
+                        }
+                    }
+                </script>
+                <%- include('../footer')%>
+</body>
+
+</html>
+<script>
+    $( document ).ready(function() {
+        var imageUrl = '/img/slip_pj.jpg';
+        
+        // ข้อมูลเพิ่มเติมที่ต้องการแสดง
+        var transferDetails = '<u>สามารถโอนเงินได้ที่บัญชีธนาคารหรือ แสกน QR Coode</u> <br>เลขบัญชี: <b>679-3874-179</b> <br> ชื่อบัญชี: นางสาวเกษวริน ไกรษร';
+
+        // กำหนดค่าของ SweetAlert2
+        Swal.fire({
+            title: 'ขั้นตอนการชำระเงิน',
+            html: transferDetails + '<br><br><img src="' + imageUrl + '" width="300" alt="Transfer Image">',
+            confirmButtonText: 'ตกลง',
+            confirmButtonColor: '#3085d6',
+            allowOutsideClick: false,
+            icon: 'info'
+        });
+});
+</script>

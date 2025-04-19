@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../head') %>
+    <title>จัดการสินค้า</title>
+    <style>
+        td{
+            text-align: left;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+
+<body class="bodyimg">
+    <%- include('../nav') %>
+    <div class="container-fluid" style="min-width: 100%; height: 100%; padding-bottom: 50px;">
+        <div class="rounded m-3 w-con mx-auto bg-secondary" style="height: 100%;">
+            <div class="d-flex pt-3 bd-highlight">
+                <div class="p-2 bg-dark flex-fill text-white">
+                    <h2><img src="/img/manage.png" alt="com" width="75px">รายการจัดส่งสินค้า</h2>
+                </div>
+            </div>
+            <div class="rounded m-3 bg-dark w-con mx-auto pb-3">
+                <table id="myTable" class="rounded table table-dark  table-hover table-striped table-sm">
+                    <thead class="table-light">
+                        <th><i class="fa-regular fa-calendar-days"></i> วันที่สั่งซื้อ</th>
+                        <th><i class="fa-solid fa-table-list"></i>รหัสคำสั่งซื้อ</th>
+                        <th><i class="fa-solid fa-circle-user"></i> รหัสลูกค้า</th>
+                        <th class="text-center"><i class="fa-solid fa-sack-dollar"></i> ยอดรวม/บาท.</th>
+                        <th class="text-center">สถานะ</th>
+                        <th class="text-center"><i class="fa-solid fa-file-pen"></i> จัดการ</th>
+                    </thead>
+                  
+                    <tbody>
+                    <% for (var i in myOr) { 
+                        if (myOr[i].or_status == 3 || myOr[i].or_status == 4){
+                         %>
+                        <tr>
+                            <td><%- formatDate(myOr[i].or_date) %></td>
+                            <td><%- myOr[i].or_id %></td>
+                            <td><%- myOr[i].cus_id %></td>
+                            <td class="text-center"><%- myOr[i].or_total.toLocaleString() %></td>
+                            <td class="text-center fw-bold">
+                                <% if(myOr[i].or_status == 3){ %>
+                                    <span class="text-primary">ยืนยันคำสั่งซื้อเรียบร้อย</span>
+                                    <% }else if(myOr[i].or_status == 4){ %>
+                                    <span class="text-success">จัดส่งสินค้าแล้ว</span>
+                                   <% } %>
+                            </td>
+                            <td class="text-center"> 
+                                <a href="/cusorders/<%- myOr[i].or_id %>" class="btn btn-info"> <i class="fa-solid fa-magnifying-glass"></i> รายละเอียด</a>
+                                &nbsp;
+                                
+                             <% } %>
+                            </td>
+                        </tr>
+                        <% 
+                    } %>
+                </tbody>
+                </table>
+                
+                </div>
+        </div>
+    </div>
+    <% function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    } %>
+    <div style="margin-top: 300px;">
+    <%- include('../footer') %>
+</div>
+</body>
+<script>
+    th = document.getElementsByTagName('th');
+for (let c = 0; c < th.length; c++){
+    th[c].addEventListener('click', item(c));
+}
+
+function item(c) {
+    return function () {
+        sortTable(c);
+    };
+}
+function sortTable(c) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById("myTable");
+    switching = true;
+    dir = "asc"; // สถานะการเรียงลำดับเริ่มต้น
+
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+
+        for (i = 1; i < (rows.length - 1); i++) {
+            shouldSwitch = false;
+            x = rows[i].getElementsByTagName("TD")[c];
+            y = rows[i + 1].getElementsByTagName("TD")[c];
+
+            var xValue, yValue;
+            
+            if (c === 3) { 
+                xValue = parseFloat(x.innerHTML.replace(/[^0-9.-]+/g,""));
+                yValue = parseFloat(y.innerHTML.replace(/[^0-9.-]+/g,""));
+            } else if (c === 4) { 
+                xValue = getStatusValue(x.innerHTML);
+                yValue = getStatusValue(y.innerHTML);
+            }
+
+            if ((dir === "asc" && xValue > yValue) || (dir === "desc" && xValue < yValue)) {
+                shouldSwitch = true;
+                break;
+            }
+        }
+
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+        } else {
+            if (switchcount === 0 && dir === "asc") {
+                dir = "desc"; // สลับการเรียงลำดับไปเรียงจากมากไปน้อย
+                switching = true;
+            }
+        }
+    }
+}
+
+function getStatusValue(status) {
+    if (status.includes("ยืนยันคำสั่งซื้อเรียบร้อย")) {
+        return 3;
+    } else if (status.includes("จัดส่งสินค้าแล้ว")) {
+        return 4;
+    } else {
+        return 0; // ค่าเริ่มต้นหากไม่ตรงกับสถานะใดๆ
+    }
+}
+
+function shipping(id) {
+    Swal.fire({
+    title: 'ยืนยันการจัดส่งสินค้า?',
+    text: 'คุณแน่ใจที่ต้องแจ้งการจัดส่งหรือไม่?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'ยืนยัน',
+    cancelButtonText: 'ยกเลิก',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = `/shipping/${id}`;
+    }
+  });
+}
+
+
+    </script>
+</html>

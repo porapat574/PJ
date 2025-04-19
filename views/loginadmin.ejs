@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('head') %>
+        <title>Login Admin</title>
+</head>
+
+<body class="bodyimg">
+    <div class="container-fluid py-5" style="margin-top: 100px;">
+        <div class="rounded m-3  w-con mx-auto my-3 text-dark" style="min-height:100%">
+            <div class="rounded col-md-6 mx-auto mt-3 bg-secondary">
+                <div class="rounded text-center text-light bg-dark py-3"
+                    style="font-size: 30px;">
+                    <p></p><i class="fa-solid fa-user-lock text-success"></i> เข้าสู่ระบบพนักงาน</p>
+
+                </div>
+                <form class="my-3 mx-5 py-3 text-white" method="POST" action="/loginadmin" style="font-size: 26px;">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">ชื่อผู้ใช้ หรือ อีเมล</label>
+                        <input type="text" class="form-control" id="username" name="username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="pass" class="form-label">รหัสผ่าน</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success">เข้าสู่ระบบ</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        if ("<%= e %>" === 'err') {
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาด',
+                text: 'ชื่อผู้ใช้หรืออีเมลหรือรหัสผ่านไม่ถูกต้อง',
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>

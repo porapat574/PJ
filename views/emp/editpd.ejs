@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../head') %>
+    <title>จัดการสินค้า</title>
+</head>
+<body class="bodyimg">
+    <%- include('../nav') %>
+    <div class="container-fluid" style="min-width: 100%;">
+        <div class="rounded m-3 w-con mx-auto bg-secondary" style="height: 100%;">
+            <div class="d-flex pt-3 bd-highlight">
+                <div class="p-2 bg-dark flex-fill text-white">
+                    <h2><img src="/img/manage.png" alt="com" width="75px">จัดการสินค้า</h2>
+                </div>
+            </div>
+            <div class="rounded m-3 w-con mx-auto">
+                <form method="POST" action="/editpd" enctype="multipart/form-data">
+                <table class="table table-dark table-striped w-75 mx-auto">
+                    <tr>
+                        <th colspan="2" class="text-center"><i class="fa-solid fa-circle-info"></i> แก้ไขข้อมูลสินค้า</th>
+                    </tr>
+                    <tr>
+                       <td colspan="2" class="text-center"> <img src="/uploads/<%= fruits.f_img %>" alt="<%= fruits.f_name %>" width="250px"></td>
+                    </tr>
+                     <tr>
+                        <td class="text-end"><i class="fa-solid fa-hashtag"> </i>&nbsp;รหัสสินค้า</td>
+                        <td class="px-5"><input type="text" class="form-control w-50 " name="f_id" value="<%= fruits.f_id %>" readonly></td>
+                    </tr>
+                    <tr>
+                        <td class="text-end"><i class="fa-solid fa-list"></i>&nbsp; ชื่อสินค้า</td>
+                        <td class="px-5"><input type="text" class="form-control w-50" value="<%= fruits.f_name %>" readonly></td>
+                    </tr>
+                    <tr>
+                        <td class="text-end"><i class="fa-regular fa-money-bill-1"></i> &nbsp;ราคารับซื้อ/กก.</td>
+                        <td class="px-5"><input type="number" name="buy_price" class="form-control w-50 " value="<%= fruits.buy_price %>"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-end"><i class="fa-regular fa-money-bill-1"></i> &nbsp;ราคาขาย/กก.</td>
+                        <td class="px-5"><input type="number" name="sale_price" class="form-control w-50 " value="<%= fruits.sale_price %>"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-end">ยอดคงเหลือปัจจุบัน/กก.</td>
+                        <td class="px-5"><input type="text" class="form-control w-50 " value="<%= fruits.balance %>" readonly></td>
+                    </tr>
+                
+                        <td class="text-end" style="font-size: 22px;"><i class="fa-regular fa-image"></i></td>
+                        <td>
+                            <input type="file" class="form-control w-75" name="f_img">
+                        </td>
+                    </tr>
+                </table>
+                <div class="col-md-12 text-center pb-3">
+                    <button type="button" class="btn btn-warning"onclick="goBack()"><i class="fa-solid fa-rotate-left"></i> ย้อนกลับ</button>
+                    &nbsp;
+                    <button type="button" id="editpd" class="btn btn-primary">แก้ไขข้อมูล</button>
+                  </div>
+            </form>
+                </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+    const editProfileButton = document.getElementById('editpd');
+    
+    editProfileButton.addEventListener('click', () => {
+        Swal.fire({
+            title: 'ยืนยันการแก้ไขข้อมูล?',
+            text: 'คุณแน่ใจที่จะบันทึกการเปลี่ยนแปลงนี้หรือไม่?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'ยืนยัน',
+            cancelButtonText: 'ยกเลิก',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // หากผู้ใช้ยืนยัน ให้ส่งแบบฟอร์ม
+                document.querySelector('form').submit();
+            }
+        });
+    });
+});
+    if ("<%= e %>" === 'ss'){  
+     Swal.fire({
+         icon: 'success',
+         title: 'อัพเดทข้อมูลสำเร็จ',
+         text: 'ข้อมูลได้ถูกแก้ไขแล้ว',
+     });
+ }
+ function goBack() {
+        window.location.href = '/productlist';
+        }
+ </script>

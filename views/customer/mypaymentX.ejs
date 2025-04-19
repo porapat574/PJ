@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../head') %>
+        <title>แจ้งชำระเงิน</title>
+
+</head>
+
+<body>
+    <%- include('../nav')%>
+        <div class="container-fluid" style="min-width: 100%;">
+            <div class="rounded m-3 w-con mx-auto bg-secondary" style="height: 100%;">
+                <div class="d-flex pt-3 bd-highlight">
+                    <div class="p-2 bg-dark flex-fill text-white">
+                        <h2><img src="/img/pay.png" alt="com" width="75px"> แจ้งชำระเงิน</h2>
+                    </div>
+                </div>
+                <div class="rounded m-3 bg-dark w-con mx-auto">
+
+                    <form method="POST" class="my-3 mx-5 py-3 text-white fs-5" action="/payments"
+                        enctype="multipart/form-data">
+                        <input type="text" name="pay_id" value="<%= payId %>">
+                        <div class="my-3 row w-50 mx-auto">
+                            <div class="input-group col-12 mb-2 ">
+                                <span class="input-group-text" style="width: 140px;"><i class="fa-solid fa-hashtag"></i>
+                                    &nbsp;หมายเลขสั่งซื้อ</span>
+                                <input type="text" name="or_id" class="form-control" value="<%- myOr.or_id %>" readonly>
+                            </div>
+                            <div class="input-group col-12 mb-2 ">
+                                <span class="input-group-text" style="width: 140px;"><i
+                                        class="fa-solid fa-address-card"></i> &nbsp;รหัสลูกค้า</span>
+                                <input type="text" name="cus_id" class="form-control" value="<%- myOr.cus_id %>"
+                                    readonly>
+                            </div>
+                            <div class="input-group col-12 mb-2 ">
+                                <span class="input-group-text" style="width: 140px;"><i
+                                        class="fa-solid fa-money-check-dollar"></i> &nbsp;ยอดรวมสุทธิ</span>
+                                <input type="number" name="or_total" class="form-control" value="<%- myOr.or_total %>"
+                                    readonly>
+                                <span class="input-group-text">บาท.</span>
+                            </div>
+                            <div class="input-group col-12 mb-2 ">
+                                <span class="input-group-text" style="width: 140px;"><i
+                                        class="fa-solid fa-money-check-dollar"></i> &nbsp;วันที่โอน</span>
+                                <input type="datetime-local" name="date_pay" class="form-control">
+                            </div>
+                            <p style="font-size: 18px;"><i class="fa-solid fa-receipt"></i> หลักฐานการโอนเงิน :</p>
+                            <div class="input-group col-12 mb-2 ">
+
+                                <input type="file" class="form-control" name="f_img" onchange="previewImage(this)"" required>
+
+                            </div>
+                            <img id="imagePreview" src="" alt="Preview" class=" border border-info rounded"
+                            style="max-width: 300px; margin-left: 140px; display: none;" />
+                            <div class="text-center pb-3 pt-3">
+
+                                <button type="button" onclick="confirmPayment()" class="btn btn-primary">แจ้งชำระเงิน</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <%- include('../footer')%>
+</body>
+
+</html>
+
+<script>
+    function previewImage(input) {
+        var preview = document.getElementById("imagePreview");
+        var file = input.files[0];
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+            preview.src = reader.result;
+            preview.style.display = "block";
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = "";
+            preview.style.display = "none";
+        }
+    }
+    function confirmPayment() {
+        // Get the input element for file
+        var fileInput = document.querySelector('input[type="file"]');
+
+        // Check if a file is selected
+        if (fileInput.files.length === 0) {
+            // No file selected, show SweetAlert2 message
+            Swal.fire({
+                icon: 'error',
+                title: 'กรุณาแนบหลักฐานการโอนเงิน',
+                text: 'คุณต้องแนบรูปภาพที่เป็นหลักฐานการโอนเงิน',
+            });
+        } else {
+            // File selected, confirm payment using SweetAlert2
+            Swal.fire({
+                title: 'แจ้งการชำระเงิน?',
+                text: 'ยืนยันการชำระเงินหรือไม่?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.querySelector('form').submit();
+                }
+            });
+        }
+    }
+</script>

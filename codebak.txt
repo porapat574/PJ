@@ -1,0 +1,35 @@
+let connection;
+  try {
+    // เริ่มทำงานกับฐานข้อมูล
+    connection = await pool.getConnection();
+
+    // เริ่ม Transaction
+    await connection.beginTransaction();
+
+    // สร้างรายการใหม่ในตาราง "fruit"
+    for (let i = 0; i < fruitName.length; i++){
+      const imgPath = req.files[i].path
+      await connection.execute(
+      'INSERT INTO fruit (f_name,f_img, f_price, balance) VALUES (?, ?, ?, ?)',
+      [fruitName[i],imgPath , price[i], quantity[i]]
+    );}
+    
+
+
+    // Commit Transaction
+    await connection.commit();
+
+    res.status(200).json({ message: 'บันทึกรายการสินค้าใหม่สำเร็จ' });
+  } catch (error) {
+    // Rollback Transaction ในกรณีเกิดข้อผิดพลาด
+    if (connection) {
+      await connection.rollback();
+    }
+    console.error('Error:', error);
+    res.status(500).json({ message: 'เกิดข้อผิดพลาดในการบันทึกรายการสินค้าใหม่' });
+  } finally {
+    if (connection) {
+      // ปิดการเชื่อมต่อกับฐานข้อมูล
+      connection.release();
+    }
+  }

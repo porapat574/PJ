@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../head') %>
+    <title>จัดการสินค้า</title>
+    <style>
+        td{
+            text-align: left;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bodyimg">
+    <%- include('../nav') %>
+    <div class="container-fluid" style="min-width: 100%; height: 100%;">
+        <div class="rounded m-3 w-con mx-auto bg-secondary" style="height: 100%;">
+            <div class="d-flex pt-3 bd-highlight">
+                <div class="p-2 bg-dark flex-fill text-white">
+                    <h2><img src="/img/manage.png" alt="com" width="75px">รายการคำสั่งซื้อของฉัน</h2>
+                </div>
+            </div>
+            <div class="rounded m-3 bg-dark w-con mx-auto pb-3">
+                <table class="rounded table table-dark  table-hover table-striped table-sm text-center">
+                    <thead class="table-light">
+                        <th><i class="fa-regular fa-calendar-days"></i> วันที่สั่งซื้อ</th>
+                       
+                        <th><i class="fa-solid fa-table-list"></i>รหัสคำสั่งซื้อ</th>
+                        <th class="text-center"><i class="fa-solid fa-sack-dollar"></i> ยอดรวม/บาท.</th>
+                        <th class="text-center">สถานะ</th>
+                        
+                        <th><i class="fa-solid fa-file-pen"></i> จัดการ</th>
+                    </thead>
+                  
+                    <tbody >
+                    <% for (var i in myOr) { 
+                        if(myOr[i].or_status != 9){ %>
+                        <tr >
+                            <td class="ps-5"><%- formatDate(myOr[i].or_date) %></td>
+                            <td class="ps-5"><%- myOr[i].or_id %></td>
+                            <td class="text-center"><%- myOr[i].or_total.toLocaleString() %></td>
+                            <td class="text-center">
+                                <% if(myOr[i].or_status == 0){ %>
+                                    <span class="text-danger">ยกเลิกรายการ</span>
+                                    <% }else if(myOr[i].or_status == 1){ %>
+                                    <span class="text-warning">รอการชำระเงิน</span>
+                                   <% }else if(myOr[i].or_status == 2){ %>
+                                    <span class="text-info">แจ้งชำระเงินแล้ว</span>
+                                   <% } else if(myOr[i].or_status == 3){ %>
+                                    <span class="text-primary">ยืนยันคำสั่งซื้อเรียบร้อย</span>
+                                    <% }else{ %>
+                                    <span class="text-success">จัดส่งสินค้าแล้ว</span>
+                                   <% } %>
+                                    
+                            </td>
+                            
+                            <td > 
+                                <a href="/myorders/<%- myOr[i].or_id %>" class="btn btn-info text-end" style="margin-left: 100px;"> <i class="fa-solid fa-magnifying-glass"></i> รายละเอียด</a>
+                                &nbsp;
+                                <% if(myOr[i].or_status == 1){ %>
+                                
+                                
+                                <button class="btn btn-danger" onclick="cancelOrder('<%- myOr[i].or_id %>')"> <i class="fa-solid fa-ban"></i> ยกเลิก</button>
+                                <% }  %>
+                            </td>
+                        </tr>
+                        <% }
+                    } %>
+                </tbody>
+                </table>
+                
+                </div>
+        </div>
+    </div>
+    <% function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    } %>
+    
+</body>
+<script>
+    function cancelOrder(id) {
+    Swal.fire({
+    title: 'ยืนยันการยกเลิกคำสั่งซื้อ?',
+    text: 'คุณแน่ใจที่ต้องการยกเลิกคำสั่งซื้อนี้หรือไม่?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'ยืนยัน',
+    cancelButtonText: 'ยกเลิก',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = `/cancelpayment/${id}`;
+    }
+  });
+    }
+    
+</script>
+</html>

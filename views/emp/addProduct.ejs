@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../head') %>
+        <title>เพิ่มรายการสินค้าใหม่</title>
+</head>
+
+<body class="bodyimg">
+    <%- include('../nav')%>
+        <div class="container-fluid" style="min-width: 100%;">
+            <div class="rounded m-3 w-con mx-auto bg-secondary " style="height: 800px;">
+                <div class="d-flex pt-3 bd-highlight">
+                    <div class="p-2 bg-dark flex-fill text-white">
+                        <h2>
+                            <img src="img/add.png" alt="com" width="75px" />เพิ่มรายการสินค้าใหม่
+                        </h2>
+                    </div>
+                </div>
+                <div class="rounded m-3 bg-dark w-con  mx-auto " style="height: 650px;">
+                    <form method="POST" id="form" class="my-3 mx-5 py-3 text-white fs-5" action="/addnewproduct"
+                        enctype="multipart/form-data">
+                        <div class="my-3 me-3 mx-auto float-start w-100 border border-info rounded px-3 py-3">
+
+                            <div class="input-group w-75 mx-auto mb-3">
+                                <span class="input-group-text" style="width: 110px">
+                                    <i class="fa-solid fa-hashtag"></i>&nbsp;รหัสสินค้า
+                                </span>
+                                <input type="text" name="f_id" class="form-control" value="<%= fId %>" readonly />
+                            </div>
+
+                            <div class="input-group w-75 mx-auto mb-3">
+                                <span class="input-group-text" style="width: 110px"><i
+                                        class="fa-regular fa-pen-to-square"></i>&nbsp;ชื่อสินค้า</span>
+                                <input type="text" name="f_name" class="form-control" required />
+                            </div>
+
+                            <div class="input-group  w-75 mx-auto mb-3">
+                                <span class="input-group-text" style="width: 110px"><i
+                                        class="fa-solid fa-money-check-dollar"></i>&nbsp;ราคาซื้อ</span>
+                                <input type="number" name="buy_price" class="form-control" placeholder="0.00"
+                                    required />
+                                <span class="input-group-text">บาท/กก.</span>
+                            </div>
+                            <div class="input-group w-75 mx-auto mb-3">
+                                <span class="input-group-text" style="width: 110px"><i
+                                        class="fa-solid fa-money-check-dollar"></i>&nbsp;ราคาขาย</span>
+                                <input type="number" name="f_price" class="form-control" placeholder="0.00" required />
+                                <span class="input-group-text">บาท/กก.</span>
+                            </div>
+                            <div class="input-group w-75 mx-auto mb-3">
+
+                                <input type="file" class="form-control" name="f_img" required
+                                    onchange="previewImage(this)" />
+                                <label class="input-group-text" for="inputGroupFile02">รูปภาพ</label>
+                            </div>
+                            <div class="mx-auto">
+                                <p style="margin-left: 140px;">รูปภาพ :</p>
+                                <img id="imagePreview" src="" alt="Preview" class=" border border-info rounded"
+                                    style="max-width: 200px; max-height: 200px; min-height: 200px; margin-left: 140px; display: block;" />
+                            </div>
+                            <div class=" text-center">
+                                <button type="button" onclick="confirm()" class="mt-3 btn btn-primary">
+                                    <i class="fa-solid fa-floppy-disk"></i>&nbsp;บันทึกรายการ
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function previewImage(input) {
+                var preview = document.getElementById("imagePreview");
+                var file = input.files[0];
+                var reader = new FileReader();
+
+                reader.onloadend = function () {
+                    preview.src = reader.result;
+                    preview.style.display = "block";
+                };
+
+                if (file) {
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.src = "#";
+                    preview.style.display = "block";
+                }
+            }
+
+            function confirm() {
+                var form = document.querySelector("form"); // เลือกแบบฟอร์มโดยใช้ ID
+                var requiredInputs = form.querySelectorAll("[required]");
+                var isFormValid = true;
+                var firstEmptyInput = null;
+                event.preventDefault();
+                // ตรวจสอบ input ที่มี required
+                requiredInputs.forEach(function (input) {
+                    if (!input.value) {
+                        isFormValid = false;
+                        Swal.fire({
+                            title: "กรุณากรอกข้อมูลให้ครบถ้วน",
+                            icon: "error",
+                        });
+                        if (!firstEmptyInput) {
+                            firstEmptyInput = input;
+                        }
+                    }
+                });
+                if (!isFormValid && firstEmptyInput) {
+                    firstEmptyInput.focus();
+                }
+                if (isFormValid) {
+                    Swal.fire({
+                        title: "ยืนยันการเพิ่มรายการสินค้า?",
+                        text: "คุณแน่ใจที่จะเพิ่มสินค้านี้หรือไม่?",
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonText: "ยืนยัน",
+                        cancelButtonText: "ยกเลิก",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                }
+            }
+
+            if ("<%= e %>" === "ss") {
+                Swal.fire({
+                    icon: "success",
+                    title: "เพิ่มข้อมูลสินค้าสำเร็จ",
+                    text: "ข้อมูลสินค้าได้ถูกเพิ่มแล้ว",
+                });
+            }
+        </script>
+</body>
+
+</html>

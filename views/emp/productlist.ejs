@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../head') %>
+    <title>จัดการสินค้า</title>
+    <style>
+        td{
+            text-align: left;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bodyimg">
+    <%- include('../nav') %>
+    <div class="container-fluid" style="min-width: 100%;">
+        <div class="rounded m-3 w-con mx-auto bg-secondary" style="height: 100%;">
+            <div class="d-flex pt-3 bd-highlight">
+                <div class="p-2 bg-dark flex-fill text-white">
+                    <h2><img src="img/manage.png" alt="com" width="75px">จัดการสินค้า</h2>
+                </div>
+            </div>
+            <div class="rounded m-3 bg-dark w-con mx-auto">
+                <table class="table table-dark table-hover table-striped table-sm">
+                    <thead class="table-light">
+                        <th><i class="fa-solid fa-hashtag"></i> รหัสสินค้า</th>
+                        <th><i class="fa-solid fa-list-ul"></i> ชื่อสินค้า</th>
+                        <th><i class="fa-solid fa-sack-dollar"></i> ราคารับซื้อ/กก.</th>
+                        <th><i class="fa-solid fa-sack-dollar"></i> ราคาขาย/กก.</th>
+                        <th>จำนวนคงเหลือ</th>
+                        <th class="ps-5"><i class="fa-regular fa-image"></i> รูป</th>
+                        <th class="text-center"><i class="fa-solid fa-list"></i> จัดการ</th>
+                    </thead>
+                    <tbody>
+                    <% for (var i in fruits) { %>
+                        <tr>
+                            <td><%- fruits[i].f_id %></td>
+                            <td><%- fruits[i].f_name %></td>
+                            <td><%- fruits[i].buy_price.toLocaleString() %></td>
+                            <td><%- fruits[i].sale_price.toLocaleString() %></td>
+                            <td><%- fruits[i].balance %></td>
+                            <td><img src="uploads/<%- fruits[i].f_img %>" alt="<%- fruits[i].f_name %>" width="150px"></td>
+                            <td class="text-center">
+                                <a href="/editpd/<%- fruits[i].f_id %>" class="btn btn-warning"><i class="fa-regular fa-pen-to-square"></i> แก้ไข</a>
+                                &nbsp; 
+                               <button type="button" class="btn btn-danger" onclick="del_product()">ลบสินค้า</button>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+                </div>
+        </div>
+    </div>
+</body>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('e');
+
+    if (message === 'ss') {
+        Swal.fire({
+            icon: 'success',
+            title: 'รับเข้าสินค้าสำเร็จ',
+            text: 'สินค้าได้ถูกรับเข้าแล้ว',
+        });
+    }
+    function del_product(){
+        Swal.fire({
+  title: "ยืนยันการลบข้อมูล",
+  text: "ต้องการลบรายการนี้หรือไม่",
+  icon: "warning",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "ยืนยัน"
+}).then((result) => {
+  if (result.isConfirmed) {
+    Swal.fire({
+      title: "ไม่สามารถลบรายการได้!",
+      text: "รายการนี้ถูกนำไปใช้แล้ว",
+      icon: "error"
+    });
+  }
+});
+    }
+</script>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../head') %>
+    <title>จัดการสินค้า</title>
+    <style>
+        td{
+            text-align: left;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bodyimg">
+    <%- include('../nav') %>
+    <div class="container-fluid" style="min-width: 100%; max-height: 100%;">
+        <div class="rounded m-3 w-con mx-auto bg-secondary" style="height: 100%;">
+            <div class="d-flex pt-3 bd-highlight">
+                <div class="p-2 bg-dark flex-fill text-white">
+                    <h2><img src="/img/cart.png" alt="com" width="75px">ตะกร้าสินค้า</h2>
+                </div>
+            </div>
+            <div class="rounded m-3 bg-dark w-con mx-auto">
+                <form action="/checkout" method="POST">
+                <table class="table table-dark table-hover table-striped">
+                    <tr>
+                        <th><i class="fa-solid fa-image"></i> รูป</th>
+                        <th><i class="fa-solid fa-table-list"></i> สินค้า</th>
+                        <th><i class="fa-solid fa-boxes-stacked"></i> ยอดคงเหลือ/กก.</th>
+                        <th><i class="fa-solid fa-sack-dollar"></i> ราคา/กก.</th>
+                        <th class="text-center"><i class="fa-solid fa-box"></i> จำนวน/กก.</th>
+                        <th><i class="fa-solid fa-sack-dollar"></i> ราคารวม</th>
+                        <th><i class="fa-solid fa-pen-to-square"></i> จัดการ</th>
+                    </tr>
+                    <% for (var i in cart) { %>
+                        <tr>
+                            <td><img src="/uploads/<%- cart[i].f_img %>" alt="<%- cart[i].f_name %>" width="150px"></td>
+                            <td><%- cart[i].f_name %><input type="hidden" name="f_id" value="<%- cart[i].f_id %>"></td>
+                            <td><%- cart[i].balance.toLocaleString() %></td>
+                            <td><%- cart[i].price.toLocaleString() %> <input type="hidden" name="price" value="<%- cart[i].price %>"></td>
+                            <td><input type="number" name="qty" class="form-control w-50 mx-auto qty-input" value="<%- cart[i].qty %>" min="0" max="<%- cart[i].balance %>"></td>
+                            <td class="ms-5 total"><%- cart[i].total %></td>
+                            <td><a href="/delcart/<%- cart[i].f_id %>" class="btn btn-danger"> <i class="fa-solid fa-eraser"></i>ลบ</a></td>
+                        </tr>
+                        <% } %>
+                        <tr>
+                            <td colspan="5" class="text-end"><i class="fa-solid fa-cash-register"></i> ราคาสุทธิ</td>
+                            <td colspan="2" class="text-end">
+                                <span id="net">0</span> &nbsp; บาท
+                                
+                            </td>
+
+                        </tr>
+                </table>
+                <div>
+                    <div class="text-end py-3 me-5">
+                        <button type="button" class="btn btn-warning"onclick="goBack()"><i class="fa-solid fa-rotate-left"></i> ย้อนกลับ</button>
+                       <% if(cart != null ){%>
+                        <button type="submit" id="sub" class="btn btn-success"><i class="fa-solid fa-money-bill-1"></i> สั่งซื้อ</button>
+                        <%} %>
+                    </div>
+                </div>
+            </form>
+                </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+  
+    function goBack() {
+        window.location.href = '/';
+        }
+  const qtyInputs = document.querySelectorAll('.qty-input');
+  const totalPriceElement = document.getElementById('net');
+  function calculateTotalPrice() {
+    let totalPrice = 0;
+    qtyInputs.forEach(input => {
+      const price = parseFloat(input.parentNode.previousElementSibling.querySelector('input').value);
+      const quantity = parseFloat(input.value);
+      const rowTotal = price * quantity;
+      totalPrice += rowTotal;
+      input.parentNode.nextElementSibling.textContent = rowTotal.toFixed(2);
+    });
+    totalPriceElement.textContent = totalPrice.toFixed(2);
+  }
+
+  qtyInputs.forEach(input => {
+    input.addEventListener('input', calculateTotalPrice);
+  });
+
+</script>

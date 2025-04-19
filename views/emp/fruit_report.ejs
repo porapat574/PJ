@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('../head') %>
+    <title>รายงานการรับเข้าสินค้า</title>
+    <style>
+      td {
+        text-align: left;
+        vertical-align: middle;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/html-pdf-node@1.0.8/index.min.js"></script>
+</head>
+
+<body class="bodyimg">
+  <%- include('../nav') %>
+    <div class="container-fluid" style="min-width: 100%; height: 100%;">
+      <div class="rounded m-3 w-con mx-auto bg-secondary pb-3" style="height: 100%; ;">
+        <div class="d-flex pt-3 bd-highlight">
+          <div class="p-2 bg-dark flex-fill text-white">
+            <h2><img src="/img/report.png" alt="com" width="75px">รายงาน รายการผลไม้</h2>
+          </div>
+        </div>
+        <div class="rounded m-3 bg-white w-con mx-auto pb-3">
+          <form class="p-1">
+            <div class="row px-3 mb-3">
+             
+              <div class="w-25 col-sm-4">
+                <button type="button" class="btn btn-info" onclick="getData()"><i
+                    class="fa-solid fa-magnifying-glass"></i> สร้างรายงาน</button>
+              </div>
+
+
+              <div class="row mt-3">
+                <table class="table table-striped ">
+                  <th>#</th>
+                  <th>รหัสสินค้า</th>
+                  <th>ชื่อสินค้า</th>
+                  <th>ราคาซื้อ</th>
+                  <th>ราคาขาย</th>
+                  <th>ยอดคงเหลือ</th>
+                  <tbody id="data_list">
+
+                  </tbody>
+                </table>
+              </div>
+              <div class="text-center">
+                <button type="button" class="btn btn-success" onclick="createPdf()"><i class="fa-solid fa-print"></i> พิมพ์</button>
+              </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+    <%- include('../footer') %>
+</body>
+
+</html>
+<script>
+ 
+  function getData() {
+   
+    fetch('/get_data_fruit', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        // ประมวลผลข้อมูลที่ได้จาก server และแสดงผลในตาราง
+        renderData(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+
+  function renderData(data) {
+    const dataList = document.getElementById('data_list');
+    dataList.innerHTML = ''; // เคลียร์ข้อมูลที่มีอยู่
+
+    // วนลูปเพื่อสร้างแถวของตาราง
+    data.forEach((row, index) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${row.f_id}</td>
+        <td>${row.f_name}</td>
+        <td>${row.buy_price}</td>
+        <td>${row.sale_price}</td>
+        <td>${row.balance.toLocaleString()}</td>
+      `;
+
+      dataList.appendChild(tr);
+    });
+  }
+
+  function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  function createPdf() {
+    
+
+    // Assuming you are using fetch to send data to the server
+    fetch('/generate-pdf-fruit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+  
+    })
+      .then(response => response.blob())
+      .then(blob => {
+        // Create a download link for the PDF
+        const pdfObjectURL = URL.createObjectURL(blob);
+
+       
+        window.open(pdfObjectURL, '_blank');
+      })
+      .catch((error) => {
+        console.error('Error generating PDF:', error);
+      });
+  }
+
+</script>

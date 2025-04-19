@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('head') %>
+        <title>Login</title>
+</head>
+
+<body class="bodyimg">
+    <div class="container-fluid py-5" style="margin-top: 100px;">
+        <div class="rounded m-3  w-con mx-auto my-3 text-dark" style="min-height:100%">
+            <div class="rounded col-md-6 mx-auto mt-3 bg-secondary">
+                <div class="rounded text-center text-white bg-dark py-3" style="font-size: 30px;">
+                    <i class="fa-solid fa-user-lock text-success"></i> ลงชื่อเข้าใช้
+
+                </div>
+                <form class="my-3 mx-5 py-3 text-white" method="POST" action="/login" style="font-size: 26px;">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">ชื่อผู้ใช้ หรือ อีเมล</label>
+                        <input type="text" class="form-control" id="username" name="username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="pass" class="form-label">รหัสผ่าน</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success">เข้าสู่ระบบ</button>
+                        <button type="button" class="btn btn-primary"
+                            onclick="location.href='/signup'">สมัครสมาชิก</button>
+                    </div>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        if ("<%= e %>" === 'err') {
+            Swal.fire({
+                icon: 'error',
+                title: 'เกิดข้อผิดพลาด',
+                text: 'ชื่อ ชื่อผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง',
+            });
+        } else if ("<%= e %>" === 'ss') {
+            Swal.fire({
+                icon: 'success',
+                title: 'สมัครสมาชิกสำเร็จ',
+                text: 'คุณได้สร้างบัญชีลูกค้าเรียบร้อยแล้ว',
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>

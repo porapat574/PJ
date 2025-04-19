@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../head') %>
+        <title>ข้อมูลบัญชี</title>
+</head>
+
+<body class="bodyimg">
+    <%- include('../nav')%>
+        <div class="container-fluid" style="min-width: 100%;">
+            <div class="rounded m-3 w-con mx-auto bg-secondary py-3" style="height: 100%;">
+                <div class="d-flex pt-3 bd-highlight">
+                    <div class="p-2 bg-dark flex-fill text-white">
+                        <h2><img src="img/profile.png" alt="com" width="75px">ข้อมูลร้าน</h2>
+                    </div>
+                </div>
+                <div class="rounded m-3 w-con mx-auto">
+                    <form method="POST" action="/editprofile">
+                        <table class="table table-dark table-striped w-75 mx-auto">
+                            <thead>
+                                <th colspan="2" class="text-center"> <i class="fa-solid fa-circle-info"></i>
+                                    แก้ไขข้อมูลร้าน </th>
+                            </thead>
+                            <tr>
+                                <td class="text-end"> ชื่อร้าน &nbsp;<i class="fa-solid fa-id-card"></i> </td>
+                                <td class="ps-5"><input type="text" class="form-control w-50" id="name" name="name"
+                                        value=""></td>
+                            </tr>
+                            <tr>
+                                <td class="text-end"> เบอร์โทรศัพท์ &nbsp;<i class="fa-solid fa-square-phone"></i></td>
+                                <td class="ps-5"><input type="text" class="form-control w-50" id="tel" name="tel"
+                                        value=""></td>
+                            </tr>
+                            <tr>
+                                <td class="text-end"> ที่อยู่ &nbsp;<i class="fa-solid fa-location-dot"></i></td>
+                                <td class="ps-5"><textarea id="cus_address" name="cus_address" cols="50"
+                                        rows="5"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-end"> รูป </td>
+                                <td class="ps-5"><img src="/img/logo.jpg" alt="logo" width="150"></td>
+                                
+                            </tr>
+                        </table>
+                        <div class="col-md-12 text-center">
+                            <button type="button" id="editProfileButton" class="btn btn-primary">แก้ไขข้อมูล</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <%- include('../footer')%>
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', () => {
+                    const editProfileButton = document.getElementById('editProfileButton');
+
+                    editProfileButton.addEventListener('click', () => {
+                        Swal.fire({
+                            title: 'ยืนยันการแก้ไขข้อมูล?',
+                            text: 'คุณแน่ใจที่จะบันทึกการเปลี่ยนแปลงนี้หรือไม่?',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'ยืนยัน',
+                            cancelButtonText: 'ยกเลิก',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // หากผู้ใช้ยืนยัน ให้ส่งแบบฟอร์ม
+                                document.querySelector('form').submit();
+                            }
+                        });
+                    });
+                });
+                if ("<%= e %>" === 'ss') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'อัพเดทข้อมูลสำเร็จ',
+                        text: 'ข้อมูลได้ถูกแก้ไขแล้ว',
+                    });
+                }
+
+            </script>
+</body>
+
+</html>

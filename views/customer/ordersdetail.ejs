@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../head') %>
+    <title>จัดการสินค้า</title>
+    <style>
+        td{
+            text-align: left;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="bodyimg">
+    <%- include('../nav') %>
+    <div class="container-fluid" style="min-width: 100%; height: 100%;">
+        <div class="rounded m-3 w-con mx-auto bg-secondary" style="height: 100%;">
+            <div class="d-flex pt-3 bd-highlight">
+                <div class="p-2 bg-dark flex-fill text-white">
+                    <h2>
+                        <img src="/img/manage.png" alt="com" width="75px">รายละเอียดคำสั่งซื้อ: <span class="text-info"> <%- myOr[0].or_id %></span>
+                         
+                    </h2>
+                   
+                </div>
+            </div>
+            <div class="rounded m-3 bg-dark w-con mx-auto pb-3">
+                <h4 class="text-light text-end">วันที่สั่งซื้อ: <span class="text-info"><%- formatDate(myOr[0].or_date) %></span></h4>
+                <table class="rounded table table-dark  table-hover table-striped table-sm" style="font-size: 18px;">
+                    <thead class="table-light text-center">
+                        <th>รหัสสินค้า</th>
+                        <th>รูป</th>
+                        <th>ชื่อสินค้า</th>
+                        <th>ราคา/กก.</th>
+                        <th>จำนวน/กก.</th>
+                        <th>ยอดรวม/บาท.</th>
+                        
+                    </thead>
+                  
+                    <tbody>
+                    <% for (var i in myOr) {
+                        net += myOr[i].total %>
+                       
+                        <tr>
+                            <td class="text-center"><%- myOr[i].f_id %></td>
+                            <td class="text-center"><img src="/uploads/<%- myOr[i].f_img %>" alt="#" width="100px"></td>
+                            <td class="text-center"><%- myOr[i].f_name %></td>
+                            <td class="text-center"><%- myOr[i].sale_price.toLocaleString() %></td>
+                            <td class="text-center"><%- myOr[i].qty.toLocaleString() %></td>
+                            <td class="text-center"><%- myOr[i].total.toLocaleString() %></td>
+                            
+                        </tr>
+                        <% } %>
+                        <tr>
+                            <td colspan="5" class="text-end">ราคาสุทธิ</td>
+                            <td class="text-center"><%- net.toLocaleString() %></td>
+                        </tr>
+                     </tbody>   
+                </table>
+                <div class="text-center py-3 me-5">
+                    <button type="button" class="btn btn-warning"onclick="goBack()"><i class="fa-solid fa-rotate-left"></i> ย้อนกลับ</button>
+                    &nbsp;
+                    <% if(myOr[0].or_status == 1){ %>
+                    <a href="/payment/<%- myOr[i].or_id %>" class="btn btn-success"> <i class="fa-solid fa-comment-dollar"></i> แจ้งชำระเงิน</a>
+                    <% }  %>
+                   
+                </div>
+                </div>
+        </div>
+    </div>
+    <% function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    } %>
+    
+</body>
+<script>
+    function goBack() {
+        window.location.href = '/myorders';
+        }
+</script>
+</html>
